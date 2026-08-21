@@ -1,0 +1,50 @@
+name: Publish to RubyGems
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to publish (must already exist, e.g. v0.1.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write            # create the GitHub Release
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Build the gem
+        run: gem build *.gemspec -o pkg.gem
+
+      - name: Verify gem version matches the tag
+        run: |
+          VER=$(ruby -e "require 'rubygems'; print Gem::Package.new('pkg.gem').spec.version.to_s")
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          if [ "v$VER" != "$TAG" ]; then
+            echo "::error::gem version ($VER) does not match tag ($TAG)"; exit 1
+          fi
+
+      - name: Publish to RubyGems
+        # Set a RUBYGEMS_API_KEY repo/org secret (your rubygems.org API key).
+        run: gem push pkg.gem
+        env:
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+
+      - name: GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          generate_release_notes: true
