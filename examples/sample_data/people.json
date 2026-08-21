@@ -1,0 +1,18 @@
+{
+  "companies": ["Globex", "Acme", "Initech"],
+  "projects": ["Apollo", "Nimbus", "Zephyr"],
+  "skills": ["Python", "GraphDB", "Design", "Kubernetes", "Machine Learning"],
+  "people": [
+    { "name": "Ada", "title": "Engineer",       "city": "Cape Town",  "face": "01.jpg", "company": "Globex", "skills": ["Python", "GraphDB"],        "projects": ["Apollo"],          "knows": ["Bob", "Carol"] },
+    { "name": "Bob",   "title": "Designer",        "city": "Nairobi",    "face": "02.jpg", "company": "Acme",   "skills": ["Design"],                    "projects": ["Nimbus"],          "knows": ["Ada", "Grace"] },
+    { "name": "Carol", "title": "Data Scientist",  "city": "Lagos",      "face": "03.jpg", "company": "Globex", "skills": ["Python", "Machine Learning"],"projects": ["Apollo", "Zephyr"],"knows": ["Ada", "Dana"] },
+    { "name": "Dana",  "title": "SRE",             "city": "Cairo",      "face": "04.jpg", "company": "Initech","skills": ["Kubernetes"],                "projects": ["Nimbus"],          "knows": ["Carol", "Eve"] },
+    { "name": "Eve",   "title": "Analyst",         "city": "Accra",      "face": "05.jpg", "company": "Globex", "skills": ["Python"],                    "projects": ["Zephyr"],          "knows": ["Dana", "Fiona"] },
+    { "name": "Fiona", "title": "Engineer",        "city": "Kigali",     "face": "06.jpg", "company": "Acme",   "skills": ["GraphDB", "Kubernetes"],     "projects": ["Apollo"],          "knows": ["Eve", "Heidi"] },
+    { "name": "Grace", "title": "Manager",         "city": "Tunis",      "face": "07.jpg", "company": "Acme",   "skills": ["Design"],                    "projects": ["Nimbus"],          "knows": ["Bob", "Ivan"] },
+    { "name": "Heidi", "title": "Product Lead",    "city": "Kampala",    "face": "08.jpg", "company": "Initech","skills": ["Machine Learning"],          "projects": ["Zephyr"],          "knows": ["Fiona", "Judy"] },
+    { "name": "Ivan",  "title": "Architect",       "city": "Dakar",      "face": "09.jpg", "company": "Globex", "skills": ["GraphDB", "Python"],         "projects": ["Apollo", "Nimbus"],"knows": ["Grace", "Judy"] },
+    { "name": "Judy",  "title": "Researcher",      "city": "Addis Ababa","face": "10.jpg", "company": "Initech","skills": ["Machine Learning", "Python"],"projects": ["Zephyr"],          "knows": ["Heidi", "Ivan"] }
+  ],
+  "manages": [["Grace", "Bob"], ["Grace", "Fiona"], ["Ivan", "Ada"], ["Ivan", "Carol"], ["Heidi", "Judy"]]
+}

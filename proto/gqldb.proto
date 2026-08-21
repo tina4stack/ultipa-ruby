@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+// Minimal subset of the Ultipa `ultipa-gqldb` gRPC surface that this driver
+// uses: authenticate (SessionService.Login) and run GQL (QueryService.Gql).
+// Field numbers/types match the server exactly (grounded via reflection against
+// the community edition, 2026-08-20). proto3 ignores unknown fields, so the
+// server's extra methods/fields we don't list here are harmless.
+package gqldb;
+
+enum PropertyType {
+  PROPERTY_TYPE_UNSET = 0;
+  PROPERTY_TYPE_INT32 = 1;
+  PROPERTY_TYPE_UINT32 = 2;
+  PROPERTY_TYPE_INT64 = 3;
+  PROPERTY_TYPE_UINT64 = 4;
+  PROPERTY_TYPE_FLOAT = 5;
+  PROPERTY_TYPE_DOUBLE = 6;
+  PROPERTY_TYPE_STRING = 7;
+  PROPERTY_TYPE_DATETIME = 8;
+  PROPERTY_TYPE_TIMESTAMP = 9;
+  PROPERTY_TYPE_TEXT = 10;
+  PROPERTY_TYPE_BLOB = 11;
+  PROPERTY_TYPE_POINT = 12;
+  PROPERTY_TYPE_DECIMAL = 13;
+  PROPERTY_TYPE_LIST = 14;
+  PROPERTY_TYPE_SET = 15;
+  PROPERTY_TYPE_MAP = 16;
+  PROPERTY_TYPE_NULL = 17;
+  PROPERTY_TYPE_BOOL = 18;
+  PROPERTY_TYPE_LOCAL_DATETIME = 19;
+  PROPERTY_TYPE_ZONED_DATETIME = 20;
+  PROPERTY_TYPE_DATE = 21;
+  PROPERTY_TYPE_ZONED_TIME = 22;
+  PROPERTY_TYPE_LOCAL_TIME = 23;
+  PROPERTY_TYPE_YEAR_TO_MONTH = 24;
+  PROPERTY_TYPE_DAY_TO_SECOND = 25;
+  PROPERTY_TYPE_RECORD = 26;
+  PROPERTY_TYPE_POINT3D = 27;
+  PROPERTY_TYPE_VECTOR = 28;
+  PROPERTY_TYPE_TABLE = 29;
+  PROPERTY_TYPE_PATH = 30;
+  PROPERTY_TYPE_ERROR = 31;
+  PROPERTY_TYPE_NODE = 32;
+  PROPERTY_TYPE_EDGE = 33;
+}
+
+message TypedValue {
+  PropertyType type = 1;
+  bytes data = 2;
+  bool is_null = 3;
+}
+
+message Parameter {
+  string name = 1;
+  TypedValue value = 2;
+}
+
+message Row {
+  repeated TypedValue values = 1;
+}
+
+message DmlStats {
+  int64 inserted_nodes = 1;
+  int64 inserted_edges = 2;
+  int64 deleted_nodes = 3;
+  int64 deleted_edges = 4;
+  int64 set_nodes = 5;
+  int64 set_edges = 6;
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+  string default_graph = 3;
+}
+
+message LoginResponse {
+  uint64 session_id = 1;
+  string server_version = 2;
+  repeated string roles = 3;
+  bool is_cluster = 10;
+  string cluster_id = 11;
+  int32 partition_count = 12;
+  repeated string capabilities = 20;
+  string current_graph = 21;
+  int64 time_cost_ns = 22;
+  int64 disk_cost_ns = 23;
+  int64 compute_cost_ns = 24;
+}
+
+message GqlRequest {
+  string gql = 1;
+  string graph_name = 2;
+  repeated Parameter parameters = 3;
+  uint64 session_id = 4;
+  uint64 transaction_id = 5;
+  int32 timeout = 6;
+  bool read_only = 7;
+  int64 max_path_results = 8;
+}
+
+message GqlResponse {
+  repeated string columns = 1;
+  repeated Row rows = 2;
+  int64 row_count = 3;
+  bool has_more = 4;
+  repeated string warnings = 5;
+  int64 rows_affected = 6;
+  string current_graph = 7;
+  int64 time_cost_ns = 8;
+  int64 disk_cost_ns = 9;
+  int64 compute_cost_ns = 10;
+  DmlStats dml_stats = 11;
+}
+
+service SessionService {
+  rpc Login (LoginRequest) returns (LoginResponse);
+}
+
+service QueryService {
+  rpc Gql (GqlRequest) returns (GqlResponse);
+}
