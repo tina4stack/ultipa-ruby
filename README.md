@@ -35,7 +35,9 @@ database** (`ultipa-gqldb`). It is the Ultipa driver behind
 [Tina4](https://tina4.com)'s graph data layer — but has **no Tina4 dependency** and
 is perfectly usable on its own. Tina4's core stays zero-dependency; this driver is
 an *optional* gem loaded only for `ultipa://` connections, speaking gRPC directly
-(`grpc` + `google-protobuf`).
+on top of the pure-Ruby [`http-2`](https://rubygems.org/gems/http-2) gem — with
+**no `grpc` C extension and no `google-protobuf` runtime**. Zero native code,
+zero transitive deps: `bundle install` pulls exactly one gem (`http-2`).
 
 > **Ultipa** is a high-performance graph database with a GQL (ISO/IEC 39075) query
 > surface. Learn more at **[ultipa.com](https://www.ultipa.com)** · docs at
@@ -46,9 +48,13 @@ an *optional* gem loaded only for `ultipa://` connections, speaking gRPC directl
 - **Complete value decoding.** Every gqldb `PropertyType` is decoded to a natural
   Ruby value — including the composites and temporals most thin clients skip
   (see [Type support](#type-support)).
-- **Real gRPC, vendored stubs.** Generated protobuf stubs ship inside the gem
-  (`lib/tina4_ultipa/gen/`), so there is no reflection round-trip and no codegen
-  step at install time.
+- **Pure Ruby, zero C extensions.** No `grpc` gem, no `google-protobuf`, no
+  native compilation on `gem install`. HTTP/2 runs through the pure-Ruby
+  [`http-2`](https://rubygems.org/gems/http-2) gem
+  (`lib/tina4_ultipa/grpc.rb` layers gRPC framing on top), and the proto3
+  wire codec is hand-rolled in `lib/tina4_ultipa/pb.rb` for the 8 gqldb
+  messages we consume. Faster installs, no toolchain, and none of the
+  `google-protobuf` transitive-pin conflicts that bite in mixed dep graphs.
 - **Fails loud.** A bad statement raises; it never returns a falsy value you might
   miss. An unreachable host raises within your `connect_timeout`.
 - **Cross-language parity.** The same driver exists for
