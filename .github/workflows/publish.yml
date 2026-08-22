@@ -31,7 +31,9 @@ jobs:
 
       - name: Verify gem version matches the tag
         run: |
-          VER=$(ruby -e "require 'rubygems'; print Gem::Package.new('pkg.gem').spec.version.to_s")
+          # `require 'rubygems'` alone no longer autoloads Gem::Package on
+          # newer bundled rubygems - pull it in explicitly.
+          VER=$(ruby -rrubygems/package -e "print Gem::Package.new('pkg.gem').spec.version.to_s")
           TAG="${{ github.event.inputs.tag || github.ref_name }}"
           if [ "v$VER" != "$TAG" ]; then
             echo "::error::gem version ($VER) does not match tag ($TAG)"; exit 1
