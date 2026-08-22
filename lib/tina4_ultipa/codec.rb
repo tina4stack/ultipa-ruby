@@ -2,6 +2,8 @@
 
 require "json"
 
+require_relative "pb"
+
 # Encode/decode gqldb TypedValue <-> Ruby values.
 #
 # Grounded against the official gqldb-nodejs SDK decoder and verified live against

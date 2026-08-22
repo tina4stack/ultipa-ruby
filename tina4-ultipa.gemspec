@@ -28,6 +28,9 @@ Gem::Specification.new do |spec|
   ]
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "google-protobuf", ">= 3.25"
-  spec.add_dependency "grpc", ">= 1.60"
+  # Pure-Ruby HTTP/2. Zero C extensions, zero google-protobuf, zero
+  # transitive deps. See lib/tina4_ultipa/grpc.rb for the tiny gRPC framing
+  # layer on top of it, and lib/tina4_ultipa/pb.rb for the hand-rolled
+  # proto3 wire codec for the 8 gqldb messages we consume.
+  spec.add_dependency "http-2", ">= 1.2"
 end
